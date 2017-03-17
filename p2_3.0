@@ -1,0 +1,61 @@
+.data
+return:	.asciiz "\n"
+labelInput:	.asciiz  "Please input a character:"
+labelOutput:	.asciiz  "String is:"
+labelROutput:	.asciiz  "String reversed is:"
+upLimit:	.word 14
+array:	.word
+
+.text
+main: 	addi $t0, $zero, 0#numbers
+	lw $t9, upLimit#until up limit
+	la $s1, array#motion pointer
+	la $s0, array#head pointer
+	#
+inputIteration:	#put out the information
+		li $v0, 4
+		la, $a0, labelInput
+		syscall
+	#input the chars
+	li $v0, 12
+	syscall
+	#
+	sw $v0, ($s1)#save the value
+	#
+	la $a0, return
+	li $v0, 4
+	syscall
+	#counter
+	#addi $t1, $t1, 4
+	addi $s1, $s1, 4#pointer move forward
+	addi $t0, $t0, 1#counter go up
+	bne $t0, $t9, inputIteration#reach the top?
+#go on out put
+FirPrepare:	addi $t0, $zero, 0
+		li $v0, 4
+		la, $a0, labelOutput
+		syscall
+sequence:	lw $a0, ($s0)
+		li $v0, 11
+		syscall
+		addi $t0, $t0, 1
+		beq $t0, $t9, SecPrepare
+		addi $s0, $s0, 4#s0 move forward
+		j sequence
+	
+SecPrepare:	la $a0, return
+		li $v0, 4
+		syscall
+		la $a0, labelROutput
+		li $v0, 4
+		syscall
+		addi $t0, $zero, 0
+		
+reverse:	lw $a0, ($s0)
+		li $v0, 11
+		syscall
+		addi $t0, $t0, 1
+		beq $t0, $t9, END
+		subi $s0, $s0, 4#s0 move downward
+		j reverse
+END:

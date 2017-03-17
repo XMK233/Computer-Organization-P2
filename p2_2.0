@@ -1,0 +1,40 @@
+.data
+upLimit: .word 1000
+label: .asciiz "The prime numbers between 1 and 1000 are:\n"
+space:	.asciiz " "
+return: .asciiz "\n"
+.text
+main:
+	lw $s0, upLimit
+	addi $s1, $zero, 1
+	addi $a1, $zero, 0 
+	addi $a2, $zero, 20
+	li $v0, 4
+	la, $a0, label
+	syscall
+iterationOut:	addi $s1, $s1, 1
+		addi $t0, $zero, 1#judgement index 
+	
+iterationIn:	addi $t0, $t0, 1
+		beq $t0, $s1 iterationInJudgeYes
+		rem $t1, $s1, $t0 
+		bne $t1, $zero, iterationIn
+		beq $s1, $s0, END
+		j iterationOut
+iterationInJudgeYes:	
+			li $v0, 1
+			addi $a0, $s1, 0 
+			syscall
+			addi $a1, $a1, 1
+			li $v0, 4	
+			la $a0, space
+			syscall
+			beq $a1, $a2, returnHead
+Continue:		bne $s1, $s0, iterationOut
+returnHead:	li $v0, 4	
+		la $a0, return
+		syscall
+		addi $a1, $zero, 0
+		j Continue
+END:
+			
